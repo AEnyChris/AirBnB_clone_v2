@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -113,17 +114,60 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, line):
         """ Create an object of any class"""
-        if not args:
+        #parse arguments into tokens
+        #check format of each token according to thier type
+        #extract the necessary information that is
+        #command, class, id, attr as key, and value as value
+        #reconstruct and create instance
+        if not line:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
+        else:
+            args = line.split(" ") #parse arguments into token
+            if args[0] not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+            if len(args) > 1:
+                attr_list = [attr for attr in args[1:] if '=' in attr]
+                key_list, raw_values = [], []
+                float_pttn = "^-?\d+\.\d+?$"
+                int_pttn = "^[0-9]+$"
+                for attr in attr_list:
+                    key_list.append(attr[:attr.find("=")])
+                    raw_values.append(attr[attr.find("=") + 1:])
+                    values = [value.strip('"') for value in raw_values]
+                new_value_list = []
+                for value in values:
+                    if '"' in value:
+                        if '\\' in value:
+                            new_value_list.append(value.replace('\\', ''))
+                        else:
+                            key_list.pop(values.index(value))
+                            continue
+                    elif '_' in value:
+                        new_value_list.append(value.replace('_', ' '))
+                    elif re.match(float_pttn, value):
+                        new_value_list.append(float(value))
+                    elif value.isdigit():
+                        new_value_list.append(value)
+                    else:
+                        new_value_list.append(value)
+                attr_dict = {}
+                for i in range(len(key_list)):
+                    attr_dict[key_list[i]] = new_value_list[i]
+                new_inst = HBNBCommand.classes[args[0]]()
+                new_inst_dict = new_inst.to_dict()
+                for i in range(len(key_list)):
+                    new_inst_dict[key_list[i]] = new_value_list[i]
+                res_inst = HBNBCommand.classes[args[0]](**new_inst_dict)
+                storage.save()
+                #print(f"res_inst:\n\t{res_inst}")
+            else:
+                res_inst = HBNBCommand.classes[args[0]]()
         storage.save()
-        print(new_instance.id)
+        print(res_inst.id)
         storage.save()
 
     def help_create(self):
