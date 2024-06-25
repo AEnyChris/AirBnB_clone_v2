@@ -116,16 +116,11 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, line):
         """ Create an object of any class"""
-        #parse arguments into tokens
-        #check format of each token according to thier type
-        #extract the necessary information that is
-        #command, class, id, attr as key, and value as value
-        #reconstruct and create instance
         if not line:
             print("** class name missing **")
             return
         else:
-            args = line.split(" ") #parse arguments into token
+            args = line.split(" ")  # parse arguments into token
             if args[0] not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
@@ -163,7 +158,6 @@ class HBNBCommand(cmd.Cmd):
                     new_inst_dict[key_list[i]] = new_value_list[i]
                 res_inst = HBNBCommand.classes[args[0]](**new_inst_dict)
                 storage.save()
-                #print(f"res_inst:\n\t{res_inst}")
             else:
                 res_inst = HBNBCommand.classes[args[0]]()
         storage.save()
@@ -181,7 +175,6 @@ class HBNBCommand(cmd.Cmd):
         c_name = new[0]
         c_id = new[2]
 
-        # guard against trailing args
         if c_id and ' ' in c_id:
             c_id = c_id.partition(' ')[0]
 
@@ -363,6 +356,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
