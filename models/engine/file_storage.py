@@ -1,15 +1,37 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+from models.base_model import BaseModel
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
+classes = {
+        'BaseModel': BaseModel,
+        'User': User,
+        'Place': Place,
+        'State': State,
+        'City': City,
+        'Amenity': Amenity,
+        'Review': Review}
 
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
 
-    def all(self):
-        """Returns a dictionary of models currently in storage"""
+    def all(self, cls=None):
+        """Returns a dictionary of specified class or all 
+        models currently in storage"""
+        if cls:
+            cls_dict = {}
+            for key, obj in self.__objects.items():
+                if type(obj) == cls:
+                    cls_dict[key] = obj
+            return cls_dict
         return FileStorage.__objects
 
     def new(self, obj):
@@ -27,13 +49,6 @@ class FileStorage:
 
     def reload(self):
         """Loads storage dictionary from file"""
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.place import Place
-        from models.state import State
-        from models.city import City
-        from models.amenity import Amenity
-        from models.review import Review
 
         classes = {
                     'BaseModel': BaseModel, 'User': User, 'Place': Place,
@@ -48,3 +63,14 @@ class FileStorage:
                         self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """deletes an object"""
+        if not obj:
+            pass
+        else:
+            try:
+                self.__objects.pop(f"{obj.__class__.__name__}.{obj.id}")
+            except KeyError:
+                pass
+        
