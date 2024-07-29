@@ -73,4 +73,7 @@ class FileStorage:
                 self.__objects.pop(f"{obj.__class__.__name__}.{obj.id}")
             except KeyError:
                 pass
-        
+
+    def close(self):
+        """calls the reload method"""
+        self.reload()
