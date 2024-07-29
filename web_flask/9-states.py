@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """Display a list of cities by states and their id"""
 
 from flask import Flask, render_template
