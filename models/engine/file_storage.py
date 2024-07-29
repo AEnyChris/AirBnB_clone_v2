@@ -18,13 +18,14 @@ classes = {
         'Amenity': Amenity,
         'Review': Review}
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
 
     def all(self, cls=None):
-        """Returns a dictionary of specified class or all 
+        """Returns a dictionary of specified class or all
         models currently in storage"""
         if cls:
             cls_dict = {}

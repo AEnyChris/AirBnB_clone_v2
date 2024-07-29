@@ -16,6 +16,7 @@ import os
 class DBStorage:
     __engine = None
     __session = None
+
     def __init__(self):
         USER = os.getenv('HBNB_MYSQL_USER')
         PWD = os.getenv('HBNB_MYSQL_PWD')
@@ -55,10 +56,10 @@ class DBStorage:
     def delete(self, obj):
         """delete from the current database session"""
         if obj:
-            self.__session.query(type(obj)\
-                    .filter(type(obj) == obj.id)\
-                    .delete(obj))
-    
+            self.__session.query(type(obj)
+                                 .filter(type(obj) == obj.id)
+                                 .delete(obj))
+
     def reload(self):
         """creates all tables from database"""
         Base.metadata.create_all(self.__engine)
